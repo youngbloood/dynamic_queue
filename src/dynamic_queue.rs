@@ -3,6 +3,7 @@ use anyhow::Result;
 use std::sync::atomic::{AtomicU64, Ordering::SeqCst};
 use tokio::sync::Semaphore;
 
+/// [`DynamicQueue`] is dynamic size buffer queue.
 pub struct DynamicQueue<T> {
     /// capacity
     cap: AtomicU64,
