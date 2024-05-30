@@ -31,7 +31,7 @@ where
         }
     }
 
-    fn resize(&self, size: usize) -> Result<()> {
+    pub fn resize(&self, size: usize) -> Result<()> {
         if self.cap.load(SeqCst) == size as u64 {
             return Ok(());
         }
@@ -49,7 +49,7 @@ where
         Ok(())
     }
 
-    async fn push(&self, t: T) -> Result<()> {
+    pub async fn push(&self, t: T) -> Result<()> {
         let permit = self.semaphore.acquire().await?;
         permit.forget();
         self.available_semaphore_num.fetch_sub(1, SeqCst);
@@ -57,7 +57,7 @@ where
         Ok(())
     }
 
-    async fn pop(&self) -> Option<T> {
+    pub async fn pop(&self) -> Option<T> {
         if let Some(msg) = self.queue.pop().await {
             if self.available_semaphore_num.load(SeqCst) < self.cap.load(SeqCst) {
                 self.semaphore.add_permits(1);
