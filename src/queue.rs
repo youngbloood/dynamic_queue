@@ -1,26 +1,32 @@
+use std::fmt::Debug;
+
 use anyhow::Result;
-use parking_lot::Mutex;
+use parking_lot::RwLock;
 
 #[async_trait::async_trait]
 pub trait Queue: Send + Sync {
     type Item;
+
+    /// push Item into Queue.
     async fn push(&self, _: Self::Item) -> Result<()>;
+
+    /// pop Item from Queue.
     async fn pop(&self) -> Option<Self::Item>;
 }
 
 pub struct DefaultQueue<T> {
-    queue: Mutex<Vec<T>>,
+    queue: RwLock<Vec<T>>,
 }
 
 impl<T> DefaultQueue<T> {
     pub fn new(size: usize) -> Self {
         DefaultQueue {
-            queue: Mutex::new(Vec::with_capacity(size)),
+            queue: RwLock::new(Vec::with_capacity(size)),
         }
     }
 
     pub fn len(&self) -> usize {
-        let lock = self.queue.lock();
+        let lock = self.queue.read();
         lock.len()
     }
 }
@@ -33,31 +39,36 @@ where
     type Item = T;
 
     async fn push(&self, t: T) -> Result<()> {
-        let mut lock = self.queue.lock();
+        let mut lock = self.queue.write();
         lock.push(t);
+        // let mut iter = lock.iter();
+        // while let Some(n) = iter.next() {
+        //     println!("t = {n:?}");
+        // }
         Ok(())
     }
 
     async fn pop(&self) -> Option<T> {
-        let mut lock = self.queue.lock();
+        let mut lock = self.queue.write();
         lock.pop()
     }
 }
 
 #[cfg(test)]
 mod tests {
+
     use super::{DefaultQueue, Queue};
 
-    #[test]
-    fn test_defaultqueue_push() {
+    #[tokio::test]
+    async fn test_defaultqueue_push() {
         let dq = DefaultQueue::new(4);
         for i in 0..10 {
-            let _ = dq.push(i);
+            let _ = dq.push(i).await;
         }
         assert_eq!(dq.len(), 10);
 
         for i in 10..20 {
-            let _ = dq.push(i);
+            let _ = dq.push(i).await;
         }
         assert_eq!(dq.len(), 20);
     }
