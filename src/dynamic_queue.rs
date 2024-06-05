@@ -187,7 +187,7 @@ mod tests {
         let dqueue = DynamicQueue::new(10, DefaultQueue::<u64>::new(5));
 
         for _ in 0..10 {
-            assert_eq!(dqueue.pop().await.is_none(), true)
+            assert!(dqueue.pop().await.is_none())
         }
     }
 
@@ -196,10 +196,10 @@ mod tests {
         let dqueue = DynamicQueue::new(10, DefaultQueue::<u64>::new(5));
 
         for i in 0..10 {
-            assert_eq!(dqueue.push(i).await.is_ok(), true)
+            assert!(dqueue.push(i).await.is_ok())
         }
         for _ in 0..10 {
-            assert_eq!(dqueue.pop().await.is_some(), true)
+            assert!(dqueue.pop().await.is_some())
         }
     }
 
@@ -208,7 +208,7 @@ mod tests {
         let dqueue = DynamicQueue::new(10, DefaultQueue::<u64>::new(5));
 
         for i in 0..10 {
-            assert_eq!(dqueue.push(i).await.is_ok(), true)
+            assert!(dqueue.push(i).await.is_ok())
         }
 
         // block
@@ -225,9 +225,9 @@ mod tests {
         }
 
         // resize increase
-        let _ = dqueue.resize(15);
+        dqueue.resize(15);
         for i in 10..15 {
-            assert_eq!(dqueue.push(i).await.is_ok(), true)
+            assert!(dqueue.push(i).await.is_ok())
         }
         select! {
             _ = ticker.tick() => {
@@ -245,7 +245,7 @@ mod tests {
         let dqueue = DynamicQueue::new(10, DefaultQueue::<u64>::new(5));
 
         for i in 0..10 {
-            assert_eq!(dqueue.push(i).await.is_ok(), true)
+            assert!(dqueue.push(i).await.is_ok())
         }
 
         // block
@@ -262,7 +262,7 @@ mod tests {
         }
 
         // resize decrease
-        let _ = dqueue.resize(5);
+        dqueue.resize(5);
         select! {
             _ = ticker.tick() => {
                 eprintln!("push should timeout again");
@@ -274,11 +274,11 @@ mod tests {
         }
 
         for _ in 0..10 {
-            assert_eq!(dqueue.pop().await.is_some(), true)
+            assert!(dqueue.pop().await.is_some())
         }
 
         for _ in 0..10 {
-            assert_eq!(dqueue.pop().await.is_none(), true)
+            assert!(dqueue.pop().await.is_none())
         }
     }
 
@@ -287,7 +287,7 @@ mod tests {
         let dqueue = DynamicQueue::new(10, DefaultQueue::<u64>::new(5));
 
         for i in 0..10 {
-            assert_eq!(dqueue.push(i).await.is_ok(), true)
+            assert!(dqueue.push(i).await.is_ok())
         }
 
         // block
@@ -304,9 +304,9 @@ mod tests {
         }
 
         // resize increase
-        let _ = dqueue.resize(15);
+        dqueue.resize(15);
         for i in 10..15 {
-            assert_eq!(dqueue.push(i).await.is_ok(), true)
+            assert!(dqueue.push(i).await.is_ok())
         }
         select! {
             _ = ticker.tick() => {
@@ -319,7 +319,7 @@ mod tests {
         }
 
         // resize increase
-        let _ = dqueue.resize(5);
+        dqueue.resize(5);
         select! {
             _ = ticker.tick() => {
                 eprintln!("push should timeout again again");
@@ -331,11 +331,11 @@ mod tests {
         }
 
         for _ in 0..15 {
-            assert_eq!(dqueue.pop().await.is_some(), true)
+            assert!(dqueue.pop().await.is_some())
         }
 
         for _ in 0..10 {
-            assert_eq!(dqueue.pop().await.is_none(), true)
+            assert!(dqueue.pop().await.is_none())
         }
     }
 
@@ -344,7 +344,7 @@ mod tests {
         let dqueue = DynamicQueue::new(10, DefaultQueue::<u64>::new(5));
 
         for i in 0..10 {
-            assert_eq!(dqueue.push(i).await.is_ok(), true)
+            assert!(dqueue.push(i).await.is_ok())
         }
 
         // block
@@ -361,7 +361,7 @@ mod tests {
         }
 
         // resize increase
-        let _ = dqueue.resize(5);
+        dqueue.resize(5);
         select! {
             _ = ticker.tick() => {
                 eprintln!("push should timeout again");
@@ -373,9 +373,9 @@ mod tests {
         }
 
         // resize increase
-        let _ = dqueue.resize(15);
+        dqueue.resize(15);
         for i in 10..20 {
-            assert_eq!(dqueue.push(i).await.is_ok(), true);
+            assert!(dqueue.push(i).await.is_ok());
         }
         select! {
             _ = ticker.tick() => {
@@ -388,11 +388,11 @@ mod tests {
         }
 
         for _ in 0..20 {
-            assert_eq!(dqueue.pop().await.is_some(), true)
+            assert!(dqueue.pop().await.is_some())
         }
 
         for _ in 0..10 {
-            assert_eq!(dqueue.pop().await.is_none(), true)
+            assert!(dqueue.pop().await.is_none())
         }
     }
 
@@ -424,7 +424,7 @@ mod tests {
         let dqueue = DynamicQueueRef::new(10, &mut queue);
 
         for _ in 0..10 {
-            assert_eq!(dqueue.pop().await.is_none(), true)
+            assert!(dqueue.pop().await.is_none())
         }
     }
 
@@ -434,10 +434,10 @@ mod tests {
         let dqueue = DynamicQueueRef::new(10, &mut queue);
 
         for i in 0..10 {
-            assert_eq!(dqueue.push(i).await.is_ok(), true)
+            assert!(dqueue.push(i).await.is_ok())
         }
         for _ in 0..10 {
-            assert_eq!(dqueue.pop().await.is_some(), true)
+            assert!(dqueue.pop().await.is_some())
         }
     }
 
@@ -447,7 +447,7 @@ mod tests {
         let dqueue = DynamicQueueRef::new(10, &mut queue);
 
         for i in 0..10 {
-            assert_eq!(dqueue.push(i).await.is_ok(), true)
+            assert!(dqueue.push(i).await.is_ok())
         }
 
         // block
@@ -464,9 +464,9 @@ mod tests {
         }
 
         // resize increase
-        let _ = dqueue.resize(15);
+        dqueue.resize(15);
         for i in 10..15 {
-            assert_eq!(dqueue.push(i).await.is_ok(), true)
+            assert!(dqueue.push(i).await.is_ok())
         }
         select! {
             _ = ticker.tick() => {
@@ -485,7 +485,7 @@ mod tests {
         let dqueue = DynamicQueueRef::new(10, &mut queue);
 
         for i in 0..10 {
-            assert_eq!(dqueue.push(i).await.is_ok(), true)
+            assert!(dqueue.push(i).await.is_ok())
         }
 
         // block
@@ -502,7 +502,7 @@ mod tests {
         }
 
         // resize decrease
-        let _ = dqueue.resize(5);
+        dqueue.resize(5);
         select! {
             _ = ticker.tick() => {
                 eprintln!("push should timeout again");
@@ -514,11 +514,11 @@ mod tests {
         }
 
         for _ in 0..10 {
-            assert_eq!(dqueue.pop().await.is_some(), true)
+            assert!(dqueue.pop().await.is_some())
         }
 
         for _ in 0..10 {
-            assert_eq!(dqueue.pop().await.is_none(), true)
+            assert!(dqueue.pop().await.is_none())
         }
     }
 
@@ -528,7 +528,7 @@ mod tests {
         let dqueue = DynamicQueueRef::new(10, &mut queue);
 
         for i in 0..10 {
-            assert_eq!(dqueue.push(i).await.is_ok(), true)
+            assert!(dqueue.push(i).await.is_ok())
         }
 
         // block
@@ -545,9 +545,9 @@ mod tests {
         }
 
         // resize increase
-        let _ = dqueue.resize(15);
+        dqueue.resize(15);
         for i in 10..15 {
-            assert_eq!(dqueue.push(i).await.is_ok(), true)
+            assert!(dqueue.push(i).await.is_ok())
         }
         select! {
             _ = ticker.tick() => {
@@ -560,7 +560,7 @@ mod tests {
         }
 
         // resize increase
-        let _ = dqueue.resize(5);
+        dqueue.resize(5);
         select! {
             _ = ticker.tick() => {
                 eprintln!("push should timeout again again");
@@ -572,11 +572,11 @@ mod tests {
         }
 
         for _ in 0..15 {
-            assert_eq!(dqueue.pop().await.is_some(), true)
+            assert!(dqueue.pop().await.is_some())
         }
 
         for _ in 0..10 {
-            assert_eq!(dqueue.pop().await.is_none(), true)
+            assert!(dqueue.pop().await.is_none())
         }
     }
 
@@ -586,7 +586,7 @@ mod tests {
         let dqueue = DynamicQueueRef::new(10, &mut queue);
 
         for i in 0..10 {
-            assert_eq!(dqueue.push(i).await.is_ok(), true)
+            assert!(dqueue.push(i).await.is_ok())
         }
 
         // block
@@ -603,7 +603,7 @@ mod tests {
         }
 
         // resize increase
-        let _ = dqueue.resize(5);
+        dqueue.resize(5);
         select! {
             _ = ticker.tick() => {
                 eprintln!("push should timeout again");
@@ -615,9 +615,9 @@ mod tests {
         }
 
         // resize increase
-        let _ = dqueue.resize(15);
+        dqueue.resize(15);
         for i in 10..20 {
-            assert_eq!(dqueue.push(i).await.is_ok(), true);
+            assert!(dqueue.push(i).await.is_ok());
         }
         select! {
             _ = ticker.tick() => {
@@ -630,11 +630,11 @@ mod tests {
         }
 
         for _ in 0..20 {
-            assert_eq!(dqueue.pop().await.is_some(), true)
+            assert!(dqueue.pop().await.is_some())
         }
 
         for _ in 0..10 {
-            assert_eq!(dqueue.pop().await.is_none(), true)
+            assert!(dqueue.pop().await.is_none())
         }
     }
 }

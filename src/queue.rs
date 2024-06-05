@@ -1,5 +1,3 @@
-use std::fmt::Debug;
-
 use anyhow::Result;
 use parking_lot::RwLock;
 
@@ -25,6 +23,7 @@ impl<T> DefaultQueue<T> {
         }
     }
 
+    #[allow(clippy::len_without_is_empty)]
     pub fn len(&self) -> usize {
         let lock = self.queue.read();
         lock.len()
@@ -77,27 +76,27 @@ mod tests {
     async fn test_defaultqueue_pop_null() {
         let dq = DefaultQueue::<u64>::new(4);
         for _ in 0..10 {
-            let _ = dq.pop();
-            assert_eq!(dq.pop().await.is_none(), true);
+            let _ = dq.pop().await;
+            assert!(dq.pop().await.is_none());
         }
     }
 
     #[tokio::test]
     async fn test_defaultqueue_pop() {
         let dq = DefaultQueue::<u64>::new(4);
-        assert_eq!(dq.push(1).await.is_ok(), true);
-        assert_eq!(dq.push(2).await.is_ok(), true);
-        assert_eq!(dq.push(3).await.is_ok(), true);
-        assert_eq!(dq.push(4).await.is_ok(), true);
-        assert_eq!(dq.push(5).await.is_ok(), true);
+        assert!(dq.push(1).await.is_ok());
+        assert!(dq.push(2).await.is_ok());
+        assert!(dq.push(3).await.is_ok());
+        assert!(dq.push(4).await.is_ok());
+        assert!(dq.push(5).await.is_ok());
         assert_eq!(dq.len(), 5);
 
         for _ in 0..5 {
-            assert_eq!(dq.pop().await.is_some(), true);
+            assert!(dq.pop().await.is_some());
         }
 
         for _ in 0..10 {
-            assert_eq!(dq.pop().await.is_none(), true);
+            assert!(dq.pop().await.is_none());
         }
     }
 }
