@@ -91,6 +91,7 @@ where
 
     pub fn resize(&self, size: usize) {
         self.ctrl.resize(size);
+        self.queue.resize(size);
     }
 
     pub async fn push(&self, t: T) -> Result<()> {
@@ -133,6 +134,7 @@ where
 
     pub fn resize(&self, size: usize) {
         self.ctrl.resize(size);
+        self.queue.resize(size);
     }
 
     pub async fn push(&self, t: T) -> Result<()> {

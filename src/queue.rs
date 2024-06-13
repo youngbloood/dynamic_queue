@@ -10,6 +10,8 @@ pub trait Queue: Send + Sync {
 
     /// pop Item from Queue.
     async fn pop(&self) -> Option<Self::Item>;
+
+    fn resize(&self, _: usize);
 }
 
 pub struct DefaultQueue<T> {
@@ -51,6 +53,8 @@ where
         let mut lock = self.queue.write();
         lock.pop()
     }
+
+    fn resize(&self, _: usize) {}
 }
 
 #[cfg(test)]
