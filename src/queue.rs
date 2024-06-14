@@ -1,6 +1,9 @@
 use anyhow::Result;
 use parking_lot::RwLock;
 
+/// [`Queue`]` is a FIFO queue, it's flow controlled by [`DynamicQueue`] or [`DynamicQueueRef`].
+///
+/// We not recommend lock when [`push`] and [`pop`].
 #[async_trait::async_trait]
 pub trait Queue: Send + Sync {
     type Item;
@@ -25,10 +28,13 @@ impl<T> DefaultQueue<T> {
         }
     }
 
-    #[allow(clippy::len_without_is_empty)]
     pub fn len(&self) -> usize {
         let lock = self.queue.read();
         lock.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 }
 
@@ -42,10 +48,6 @@ where
     async fn push(&self, t: T) -> Result<()> {
         let mut lock = self.queue.write();
         lock.push(t);
-        // let mut iter = lock.iter();
-        // while let Some(n) = iter.next() {
-        //     println!("t = {n:?}");
-        // }
         Ok(())
     }
 

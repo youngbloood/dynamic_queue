@@ -1,5 +1,5 @@
 use crate::queue::Queue;
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use std::{
     sync::atomic::{AtomicU64, Ordering::SeqCst},
     usize,
@@ -68,6 +68,10 @@ impl FlowControl {
             }
         }
     }
+
+    pub fn has_permit(&self) -> bool {
+        self.semaphore.available_permits() > 0
+    }
 }
 
 /// [`DynamicQueue`] is dynamic size buffer queue.
@@ -92,6 +96,17 @@ where
     pub fn resize(&self, size: usize) {
         self.ctrl.resize(size);
         self.queue.resize(size);
+    }
+
+    pub fn can_push(&self) -> bool {
+        self.ctrl.has_permit()
+    }
+
+    pub async fn try_push(&self, t: T) -> Result<()> {
+        if !self.can_push() {
+            return Err(anyhow!("not available permit to push"));
+        }
+        self.push(t).await
     }
 
     pub async fn push(&self, t: T) -> Result<()> {
@@ -135,6 +150,17 @@ where
     pub fn resize(&self, size: usize) {
         self.ctrl.resize(size);
         self.queue.resize(size);
+    }
+
+    pub fn can_push(&self) -> bool {
+        self.ctrl.has_permit()
+    }
+
+    pub async fn try_push(&self, t: T) -> Result<()> {
+        if !self.can_push() {
+            return Err(anyhow!("not avalaible permit to push"));
+        }
+        self.push(t).await
     }
 
     pub async fn push(&self, t: T) -> Result<()> {
