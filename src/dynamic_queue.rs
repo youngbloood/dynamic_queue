@@ -7,7 +7,7 @@ use std::{
 use tokio::sync::Semaphore;
 
 /// [`FlowControl`]  control the concurrency.
-struct FlowControl {
+pub struct FlowControl {
     /// capacity
     cap: AtomicU64,
 
@@ -19,7 +19,7 @@ struct FlowControl {
 }
 
 impl FlowControl {
-    fn new(size: usize) -> Self {
+    pub fn new(size: usize) -> Self {
         FlowControl {
             cap: AtomicU64::new(size as _),
             available_semaphore_num: AtomicU64::new(size as _),
@@ -62,10 +62,11 @@ impl FlowControl {
     pub async fn revert(&self, mut n: usize) {
         while n != 0 {
             n -= 1;
-            if self.available_semaphore_num.load(SeqCst) < self.cap.load(SeqCst) {
-                self.semaphore.add_permits(1);
-                self.available_semaphore_num.fetch_add(1, SeqCst);
+            if self.available_semaphore_num.load(SeqCst) >= self.cap.load(SeqCst) {
+                break;
             }
+            self.semaphore.add_permits(1);
+            self.available_semaphore_num.fetch_add(1, SeqCst);
         }
     }
 
